@@ -1,4 +1,4 @@
-# CLI Interface Documentation for rocketfasta
+# rocketfasta 🚀
 
 ## Overview
 
