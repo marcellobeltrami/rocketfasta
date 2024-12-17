@@ -32,7 +32,9 @@ int main(int argc, char** argv) {
     
     // Prints headers if flag is passed.
     if( header == true){
-        my_fasta.FastaHeaders(path);
+        my_fasta.New(path);
+        my_fasta.FastaHeaders();
+        
     }
     
     // Carrysout alignment with all sequences in the file give one of the sequences ID as a reference.
