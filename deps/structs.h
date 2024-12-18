@@ -32,8 +32,8 @@ class BLAST_info
    
     public: 
 
-   map<string, pair<string, string>> New(string path) {
-    auto FastaFile = static_cast<void*>(nullptr); // To handle both gzFile and FILE
+   map<string, pair<string, string>> New(string& path) {
+    auto FastaFile = static_cast<void*>(nullptr); // defines a pointer to potentially hold the address of an object in the future
     string fastatxt;
     string ID;
     string fastaseq;
@@ -246,3 +246,5 @@ class Align{
 
 
 };
+
+
