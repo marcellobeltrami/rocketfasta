@@ -4,7 +4,7 @@
 
 #include "./deps/CLI11.hpp"
 #include "./deps/structs.h"
-
+#include "./deps/addons.h"
 
 
 int main(int argc, char** argv) {
@@ -23,11 +23,17 @@ int main(int argc, char** argv) {
     string reference;
     app.add_option("-r,--reference-id", reference, "ID of the reference sequence found in FASTA file.");
 
+
+    string subsequence;
+    app.add_option("-s,--subsequence-pattern", subsequence, "A nucleotide sequence that you want to file in the fasta sequences of fasta file");
+
+
     CLI11_PARSE(app, argc, argv);
     // CLI Interface ends----------------------------//
 
 
     BLAST_info my_fasta;
+    map<string, pair<string, string>> FastaStruct; // This variable is commonly shared. Structured to only create one representation of fasta im memory.
     
     
     // Prints headers if flag is passed.
@@ -37,12 +43,12 @@ int main(int argc, char** argv) {
         
     }
     
-    // Carrysout alignment with all sequences in the file give one of the sequences ID as a reference.
+    // Carrys out alignment with all sequences in the file if one of the sequences ID id given as a reference.
     if (reference.empty() ==false){
-        map<string, pair<string, string>> FastaStruct = my_fasta.New(path); // Struct: ID (metadata,sequence)
+        FastaStruct = my_fasta.New(path); // Struct: ID (metadata,sequence)
 
-        auto it = FastaStruct.find(reference);
-        if (it != FastaStruct.end()) {
+        auto reference_obj = FastaStruct.find(reference);
+        if (reference_obj != FastaStruct.end()) {
             
             cout << "Reference"<<endl;
             cout << FastaStruct[reference].second<<endl;
@@ -50,10 +56,8 @@ int main(int argc, char** argv) {
             for (const auto& fasta_entry : FastaStruct){ 
                 
                 if (fasta_entry.first != reference){
-                    string ID1=reference;
-                    string ID2=fasta_entry.first;
-
-                    string seq1=FastaStruct[ID1].second;
+                    
+                    string seq1=FastaStruct[fasta_entry.first].second;
                     string seq2 = FastaStruct[fasta_entry.first].second;
 
                     Align rad_seqs;
@@ -61,7 +65,7 @@ int main(int argc, char** argv) {
                     vector<string> my_alignment = rad_seqs.Global_NW(seq1,seq2);
 
                     cout << "#################################################" << endl;
-                    cout << "Ref: " << ID1 << " Target: " << ID2<< endl; 
+                    cout << "Ref: " << reference << " Target: " << fasta_entry.first<< endl; 
                     cout << my_alignment[0] << endl;
                     cout << my_alignment[1] << endl;
                 }
@@ -77,8 +81,49 @@ int main(int argc, char** argv) {
 
     }
 
+    // Finds first occurrences of subsequence in all sequences of fasta file.
+    if (subsequence.empty() ==false){
+        if (reference.empty() ==false){ // Uses already loaded file to find sequences.
+            
+            for (const auto& fasta_entry : FastaStruct){
+                
+                vector<pair<int,int>> match = FirstMatch(FastaStruct[fasta_entry.first].second,subsequence);
 
-    return 0;
+                if (match[0].first == -1 && match[0].second){
+
+                    cout << "No matches found at: " << fasta_entry.first << endl;
+
+                } else { 
+
+                    cout << fasta_entry.first << " Start: " << match[0].first 
+                                                           << " End: " << match[0].second << endl;
+                }
+
+            } 
+        } else if (reference.empty() ==true){ // Loads in file and Finds sequences.
+
+            FastaStruct = my_fasta.New(path);
+            for (const auto& fasta_entry : FastaStruct){
+                
+                vector<pair<int,int>> match = FirstMatch(FastaStruct[fasta_entry.first].second,subsequence);
+
+                if (match[0].first == -1 && match[0].second){
+
+                    cout << "No matches found at: " << fasta_entry.first << endl;
+
+                } else { 
+
+                    cout << fasta_entry.first << " Start: " << match[0].first 
+                                                           << " End: " << match[0].second << endl;
+                }
+
+            }
+
+        }
+
+    }
+
+    exit(0); // Exit program when finished with no errors 
 
 }
 

@@ -229,7 +229,7 @@ class Align{
     public: 
 
         // Returns a vector with the 2 aligned sequences.
-        vector<string> Global_NW(string seq1,string seq2){
+        vector<string> Global_NW(string& seq1, string& seq2){
             
             vector<vector<int>> matrix(seq1.size() + 1, vector<int>(seq2.size() + 1, 0));
             

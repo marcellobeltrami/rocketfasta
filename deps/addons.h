@@ -3,13 +3,14 @@
 #include <string>
 #include <map>
 #include <algorithm>
+#include <optional>
 
 using namespace std;
 
 
 // Finds partially matching subsequences in a sequence. TODO: returns starting position, ensure it also returns the ending position 
-// Implementation of Boyer-Moore Algorithm.
-auto PartialMatch(string& sequence, string& subseq){
+// Implementation of Boyer-Moore Algorithm. Finds only the first subseq in sequence.
+vector<pair<int,int>>  FirstMatch(string& sequence, string& subseq){
 
     int n = sequence.length();
     int m = subseq.length();
@@ -30,8 +31,10 @@ auto PartialMatch(string& sequence, string& subseq){
         if (subseq[j]==sequence[i]){
 
             if (j==0){
+                vector<pair<int,int>> seq_range;  
+                seq_range.push_back({i+1, i + m - 1}); // Start and end are inclusive.
 
-                return i;
+                return seq_range;
             }
 
             i -= 1;
@@ -51,12 +54,11 @@ auto PartialMatch(string& sequence, string& subseq){
             j = m - 1;
         }
     }
+    
+     vector<pair<int,int>> no_found;  
+                no_found.push_back({-1, -1});
 
-
-
-    return -1;  //Pattern not found
+    return no_found;  //Pattern not found
 
 }
 
-// Return start-end location of complete match sequence --> FIgure out best algo to do so.
-auto FindSeq(){}
