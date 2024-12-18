@@ -58,9 +58,9 @@
 ./fasta_parser -i input.fasta -H
 ```
 
-### Example 2: Parse a FASTA file and find a sequence with a specific reference ID
+### Example 2: Parse a FASTA file and find aligns the sequence with the ID provided to the other sequences in file.
 ```bash
-./fasta_parser -i input.fasta -r ref123
+./fasta_parser -i input.fasta -r ID_123
 ```
 
 ### Example 3: Parse a FASTA file without additional options
