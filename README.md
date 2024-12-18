@@ -3,7 +3,6 @@
 ## Overview
 
  The **FASTA Parser** is a command-line tool designed to process FASTA files, retrieve sequence headers, and extract sequences based on a specified reference ID. 
----
 
 ## Command-line Arguments
 
