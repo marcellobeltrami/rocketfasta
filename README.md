@@ -51,6 +51,23 @@
 
 ---
 
+### 4. **Se** (`-s`, `--subsequence-pattern`)
+- **Description**: "A nucleotide sequence that you want to file in the fasta sequences of fasta file. Return BED style Start and End coordinates.
+- **Usage**: This argument is optional but requires a string value corresponding to the wanted subsequence to be searched.
+- **Syntax**:
+  ```bash
+  -s <nucleotide_sequence> 
+  --subsequence-pattern <nucleotide_sequence>
+  ```
+- **Example**:
+  ```bash
+  ./fasta_parser -i input.fasta -s ATGT
+  ```
+
+---
+
+
+
 ## Usage Examples
 
 ### Example 1: Parse a FASTA file and print all headers

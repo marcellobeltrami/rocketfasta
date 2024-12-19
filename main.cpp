@@ -24,7 +24,7 @@ int main(int argc, char** argv) {
 
 
     string subsequence;
-    app.add_option("-s,--subsequence-pattern", subsequence, "A nucleotide sequence that you want to file in the fasta sequences of fasta file. Start inclusive, End non-inclusive.");
+    app.add_option("-s,--subsequence-pattern", subsequence, "A nucleotide sequence that you want to file in the fasta sequences of fasta file. Returns BED style locations.");
 
 
     CLI11_PARSE(app, argc, argv);
