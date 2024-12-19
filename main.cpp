@@ -14,7 +14,7 @@ int main(int argc, char** argv) {
     argv = app.ensure_utf8(argv);
 
     string path;
-    app.add_option("-i,--fasta-input", path, "Path to fasta file")
+    app.add_option("-i,--fasta-input", path, "Path to fasta file. Format: .fna, .fasta and .fa or .gz versions")
                     ->required();
 
     bool header;
@@ -25,7 +25,7 @@ int main(int argc, char** argv) {
 
 
     string subsequence;
-    app.add_option("-s,--subsequence-pattern", subsequence, "A nucleotide sequence that you want to file in the fasta sequences of fasta file");
+    app.add_option("-s,--subsequence-pattern", subsequence, "A nucleotide sequence that you want to file in the fasta sequences of fasta file. Start inclusive, End non-inclusive.");
 
 
     CLI11_PARSE(app, argc, argv);
@@ -85,36 +85,36 @@ int main(int argc, char** argv) {
     if (subsequence.empty() ==false){
         if (reference.empty() ==false){ // Uses already loaded file to find sequences.
             
+            cout << "ID\tStart\tEnd"<<endl;
+
             for (const auto& fasta_entry : FastaStruct){
                 
                 vector<pair<int,int>> match = FirstMatch(FastaStruct[fasta_entry.first].second,subsequence);
 
                 if (match[0].first == -1 && match[0].second){
 
-                    cout << "No matches found at: " << fasta_entry.first << endl;
+                    cout << fasta_entry.first << "\t" << "NULL" << "\t" << "NULL" << endl;
 
                 } else { 
 
-                    cout << fasta_entry.first << " Start: " << match[0].first 
-                                                           << " End: " << match[0].second << endl;
+                    cout << fasta_entry.first << "\t" << match[0].first << "\t" << match[0].second << endl;
                 }
 
             } 
         } else if (reference.empty() ==true){ // Loads in file and Finds sequences.
 
             FastaStruct = my_fasta.New(path);
+            cout << "ID\tStart\tEnd"<< endl;
             for (const auto& fasta_entry : FastaStruct){
                 
                 vector<pair<int,int>> match = FirstMatch(FastaStruct[fasta_entry.first].second,subsequence);
 
-                if (match[0].first == -1 && match[0].second){
+                if (match[0].first == -1 && match[0].second == -1){
 
-                    cout << "No matches found at: " << fasta_entry.first << endl;
+                    cout << fasta_entry.first << "\t" << "NULL" << "\t" << "NULL" << endl;
 
                 } else { 
-
-                    cout << fasta_entry.first << " Start: " << match[0].first 
-                                                           << " End: " << match[0].second << endl;
+                    cout << fasta_entry.first << "\t" << match[0].first << "\t" << match[0].second << endl;
                 }
 
             }

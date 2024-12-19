@@ -32,8 +32,7 @@ vector<pair<int,int>>  FirstMatch(string& sequence, string& subseq){
 
             if (j==0){
                 vector<pair<int,int>> seq_range;  
-                seq_range.push_back({i+1, i + m - 1}); // Start and end are inclusive.
-
+                seq_range.push_back({i, i + m+1}); // BED format. Start inclusive, End non-inclusive.
                 return seq_range;
             }
 
