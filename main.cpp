@@ -3,9 +3,8 @@
 #include <fstream>
 
 #include "./deps/CLI11.hpp"
-#include "./deps/structs.h"
-
-
+#include "./logic/newANDalign.h"
+#include "./logic/seqSearch.h"
 
 int main(int argc, char** argv) {
     // CLI Interface starts----------------------------//
@@ -14,7 +13,7 @@ int main(int argc, char** argv) {
     argv = app.ensure_utf8(argv);
 
     string path;
-    app.add_option("-i,--fasta-input", path, "Path to fasta file")
+    app.add_option("-i,--fasta-input", path, "Path to fasta file. Format: .fna, .fasta and .fa or .gz versions")
                     ->required();
 
     bool header;
@@ -23,11 +22,17 @@ int main(int argc, char** argv) {
     string reference;
     app.add_option("-r,--reference-id", reference, "ID of the reference sequence found in FASTA file.");
 
+
+    string subsequence;
+    app.add_option("-s,--subsequence-pattern", subsequence, "A nucleotide sequence that you want to file in the fasta sequences of fasta file. Start inclusive, End non-inclusive.");
+
+
     CLI11_PARSE(app, argc, argv);
     // CLI Interface ends----------------------------//
 
 
     BLAST_info my_fasta;
+    map<string, pair<string, string>> FastaStruct; // This variable is commonly shared. Structured to only create one representation of fasta im memory.
     
     
     // Prints headers if flag is passed.
@@ -37,48 +42,13 @@ int main(int argc, char** argv) {
         
     }
     
-    // Carrysout alignment with all sequences in the file give one of the sequences ID as a reference.
-    if (reference.empty() ==false){
-        map<string, pair<string, string>> FastaStruct = my_fasta.New(path); // Struct: ID (metadata,sequence)
+    // Carrys out alignment when reference is provided.
+    alignment(path,reference,FastaStruct, my_fasta);
+    
+    // Finds first occurrences of subsequence in all sequences of fasta file.
+    subseqsearch(subsequence, path, reference, FastaStruct, my_fasta);
 
-        auto it = FastaStruct.find(reference);
-        if (it != FastaStruct.end()) {
-            
-            cout << "Reference"<<endl;
-            cout << FastaStruct[reference].second<<endl;
-            cout << "Aligned"<<endl;
-            for (const auto& fasta_entry : FastaStruct){ 
-                
-                if (fasta_entry.first != reference){
-                    string ID1=reference;
-                    string ID2=fasta_entry.first;
-
-                    string seq1=FastaStruct[ID1].second;
-                    string seq2 = FastaStruct[fasta_entry.first].second;
-
-                    Align rad_seqs;
-                    
-                    vector<string> my_alignment = rad_seqs.Global_NW(seq1,seq2);
-
-                    cout << "#################################################" << endl;
-                    cout << "Ref: " << ID1 << " Target: " << ID2<< endl; 
-                    cout << my_alignment[0] << endl;
-                    cout << my_alignment[1] << endl;
-                }
-
-
-            }
-
-
-        } else {
-            cout << "Reference: '" << reference << "' does not exist in the file!" << endl;
-            exit (2);
-    }
-
-    }
-
-
-    return 0;
+    exit(0); // Exit program when finished with no errors 
 
 }
 

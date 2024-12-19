@@ -24,16 +24,43 @@ class BLAST_info
         return (first == string::npos || last == string::npos) ? "" : str.substr(first, (last - first + 1));
     }
 
-    // Function to check if a file path ends with ".gz"
+    // Function to check if a file path ends with ".gz" and 
     bool endsWithGZ(const string& path) {
-        return path.size() >= 3 && path.substr(path.size() - 3) == ".gz";
+
+        if (path.size() >= 7 && path.substr(path.size() - 7) == ".fna.gz"){
+            return true;
+        } else if (path.size() >= 9 && path.substr(path.size() - 9) == ".fasta.gz"){
+            return true;
+        } else if (path.size() >= 6 && path.substr(path.size() - 6) == ".fa.gz"){
+            return true;
+        } else {
+            return false;
+        }
+
+        
+    }
+
+    // Function to check if a file is an unzipped fasta format
+    bool isFasta(const string& path) {
+
+        if (path.size() >= 4 && path.substr(path.size() - 4) == ".fna"){
+            return true;
+        } else if (path.size() >= 6 && path.substr(path.size() - 6) == ".fasta"){
+            return true;
+        } else if (path.size() >= 3 && path.substr(path.size() - 3) == ".fa"){
+            return true;
+        } else {
+            return false;
+        }
+
+        
     }
 
    
     public: 
 
-   map<string, pair<string, string>> New(string path) {
-    auto FastaFile = static_cast<void*>(nullptr); // To handle both gzFile and FILE
+   map<string, pair<string, string>> New(string& path) {
+    auto FastaFile = static_cast<void*>(nullptr); // defines a pointer to potentially hold the address of an object in the future
     string fastatxt;
     string ID;
     string fastaseq;
@@ -46,7 +73,15 @@ class BLAST_info
     if (isGzipped) {
         FastaFile = gzopen(path.c_str(), "rb");
     } else {
-        FastaFile = fopen(path.c_str(), "r");
+        if (isFasta(path) == true){
+            FastaFile = fopen(path.c_str(), "r");
+        } else {
+            cout << "File is not fasta format" << endl;
+            exit(3);
+        }
+            
+        
+        
     }
 
     // Check if the file was opened successfully
@@ -55,7 +90,7 @@ class BLAST_info
         exit(1);
     }
 
-    cout << "Reading FASTA..." << endl;
+    
 
     if (isGzipped) {
         // For gzipped files
@@ -117,7 +152,6 @@ class BLAST_info
         fclose(static_cast<FILE*>(FastaFile));
     }
 
-    cout << "Fasta Object created." << endl;
     fastaObj = output;
     return output;
 
@@ -229,7 +263,7 @@ class Align{
     public: 
 
         // Returns a vector with the 2 aligned sequences.
-        vector<string> Global_NW(string seq1,string seq2){
+        vector<string> Global_NW(string& seq1, string& seq2){
             
             vector<vector<int>> matrix(seq1.size() + 1, vector<int>(seq2.size() + 1, 0));
             
@@ -246,3 +280,5 @@ class Align{
 
 
 };
+
+
