@@ -3,9 +3,8 @@
 #include <fstream>
 
 #include "./deps/CLI11.hpp"
-#include "./deps/structs.h"
-#include "./deps/addons.h"
-
+#include "./logic/newANDalign.h"
+#include "./logic/seqSearch.h"
 
 int main(int argc, char** argv) {
     // CLI Interface starts----------------------------//
@@ -43,85 +42,11 @@ int main(int argc, char** argv) {
         
     }
     
-    // Carrys out alignment with all sequences in the file if one of the sequences ID id given as a reference.
-    if (reference.empty() ==false){
-        FastaStruct = my_fasta.New(path); // Struct: ID (metadata,sequence)
-
-        auto reference_obj = FastaStruct.find(reference);
-        if (reference_obj != FastaStruct.end()) {
-            
-            cout << "Reference"<<endl;
-            cout << FastaStruct[reference].second<<endl;
-            cout << "Aligned"<<endl;
-            for (const auto& fasta_entry : FastaStruct){ 
-                
-                if (fasta_entry.first != reference){
-                    
-                    string seq1=FastaStruct[fasta_entry.first].second;
-                    string seq2 = FastaStruct[fasta_entry.first].second;
-
-                    Align rad_seqs;
-                    
-                    vector<string> my_alignment = rad_seqs.Global_NW(seq1,seq2);
-
-                    cout << "#################################################" << endl;
-                    cout << "Ref: " << reference << " Target: " << fasta_entry.first<< endl; 
-                    cout << my_alignment[0] << endl;
-                    cout << my_alignment[1] << endl;
-                }
-
-
-            }
-
-
-        } else {
-            cout << "Reference: '" << reference << "' does not exist in the file!" << endl;
-            exit (2);
-    }
-
-    }
-
+    // Carrys out alignment when reference is provided.
+    alignment(path,reference,FastaStruct, my_fasta);
+    
     // Finds first occurrences of subsequence in all sequences of fasta file.
-    if (subsequence.empty() ==false){
-        if (reference.empty() ==false){ // Uses already loaded file to find sequences.
-            
-            cout << "ID\tStart\tEnd"<<endl;
-
-            for (const auto& fasta_entry : FastaStruct){
-                
-                vector<pair<int,int>> match = FirstMatch(FastaStruct[fasta_entry.first].second,subsequence);
-
-                if (match[0].first == -1 && match[0].second){
-
-                    cout << fasta_entry.first << "\t" << "NULL" << "\t" << "NULL" << endl;
-
-                } else { 
-
-                    cout << fasta_entry.first << "\t" << match[0].first << "\t" << match[0].second << endl;
-                }
-
-            } 
-        } else if (reference.empty() ==true){ // Loads in file and Finds sequences.
-
-            FastaStruct = my_fasta.New(path);
-            cout << "ID\tStart\tEnd"<< endl;
-            for (const auto& fasta_entry : FastaStruct){
-                
-                vector<pair<int,int>> match = FirstMatch(FastaStruct[fasta_entry.first].second,subsequence);
-
-                if (match[0].first == -1 && match[0].second == -1){
-
-                    cout << fasta_entry.first << "\t" << "NULL" << "\t" << "NULL" << endl;
-
-                } else { 
-                    cout << fasta_entry.first << "\t" << match[0].first << "\t" << match[0].second << endl;
-                }
-
-            }
-
-        }
-
-    }
+    subseqsearch(subsequence, path, reference, FastaStruct, my_fasta);
 
     exit(0); // Exit program when finished with no errors 
 

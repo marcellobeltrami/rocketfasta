@@ -27,11 +27,11 @@ class BLAST_info
     // Function to check if a file path ends with ".gz" and 
     bool endsWithGZ(const string& path) {
 
-        if (path.size() >= 3 && path.substr(path.size() - 3) == ".fna.gz"){
+        if (path.size() >= 7 && path.substr(path.size() - 7) == ".fna.gz"){
             return true;
-        } else if (path.size() >= 3 && path.substr(path.size() - 3) == ".fasta.gz"){
+        } else if (path.size() >= 9 && path.substr(path.size() - 9) == ".fasta.gz"){
             return true;
-        } else if (path.size() >= 3 && path.substr(path.size() - 3) == ".fa.gz"){
+        } else if (path.size() >= 6 && path.substr(path.size() - 6) == ".fa.gz"){
             return true;
         } else {
             return false;
@@ -43,9 +43,9 @@ class BLAST_info
     // Function to check if a file is an unzipped fasta format
     bool isFasta(const string& path) {
 
-        if (path.size() >= 3 && path.substr(path.size() - 3) == ".fna"){
+        if (path.size() >= 4 && path.substr(path.size() - 4) == ".fna"){
             return true;
-        } else if (path.size() >= 3 && path.substr(path.size() - 3) == ".fasta"){
+        } else if (path.size() >= 6 && path.substr(path.size() - 6) == ".fasta"){
             return true;
         } else if (path.size() >= 3 && path.substr(path.size() - 3) == ".fa"){
             return true;
