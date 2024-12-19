@@ -1,2 +1,5 @@
-*.bin   
+./main
+./test
+./rocketfast
 ./test.cpp
+*.vscode/
