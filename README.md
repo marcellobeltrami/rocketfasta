@@ -3,7 +3,6 @@
 ## Overview
 
  The **FASTA Parser** is a command-line tool designed to process FASTA files, retrieve sequence headers, and extract sequences based on a specified reference ID. 
----
 
 ## Command-line Arguments
 
@@ -52,30 +51,43 @@
 
 ---
 
-## Usage Examples
-
-### Example 1: Parse a FASTA file and print all headers
-```bash
-./fasta_parser -i input.fasta -H
-```
-
-### Example 2: Parse a FASTA file and find a sequence with a specific reference ID
-```bash
-./fasta_parser -i input.fasta -r ref123
-```
-
-### Example 3: Parse a FASTA file without additional options
-```bash
-./fasta_parser -i input.fasta
-```
+### 4. **Subseqeunce** (`-s`, `--subsequence-pattern`)
+- **Description**: "A nucleotide sequence that you want to file in the fasta sequences of fasta file. Return BED style Start and End coordinates.
+- **Usage**: This argument is optional but requires a string value corresponding to the wanted subsequence to be searched.
+- **Syntax**:
+  ```bash
+  -s <nucleotide_sequence> 
+  --subsequence-pattern <nucleotide_sequence>
+  ```
+- **Example**:
+  ```bash
+  ./fasta_parser -i input.fasta -s ATGT
+  ```
 
 ---
+
+### 5. **Alignemnt type** (`-a`, `--alignment-type`)
+- **Description**: Allows to specify alignment type between global (g) or local (l).
+- **Usage**: If this argument is not provided, alignment defaults to global.
+- **Syntax**:
+  ```bash
+  -a <g> or <l>
+  --alignment-type <g> or <l>
+  ```
+- **Example**:
+  ```bash
+  ./fasta_parser -i input.fasta -r ID 7 -a l // for local alignment
+  ./fasta_parser -i input.fasta -r ID 7 -a g // for global alignment
+  ```
+
+---
+
 
 ## Exit Codes
 
 - **0**: Program executed successfully.
 - **1**: Missing required arguments or invalid input.
-
+- **2**: Invalid argument for alignment type / Alignment reference doesnt exist 
 ---
 
 ## Notes
@@ -86,4 +98,5 @@
 
 ## Credits
 
-Developed using the [CLI11](https://cliutils.github.io/CLI11/) library.
+> [CLI11](https://cliutils.github.io/CLI11/) library.
+> [zlib-1.3.1](https://github.com/madler/zlib) library
