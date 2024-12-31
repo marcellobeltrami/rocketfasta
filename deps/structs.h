@@ -252,13 +252,73 @@ class Align{
 
             return output_strings;
         }
-        
 
 
 
         // ################ Local_SW |Smith-Waterman| functions ###################
+        // Function to initialize the matrix for local alignment
+        void initializeMatrix_Local(vector<vector<int>>& matrix, string& seq1, string& seq2) {
+            for (size_t i = 0; i <= seq1.size(); ++i) {
+                for (size_t j = 0; j <= seq2.size(); ++j) {
+                    matrix[i][j] = 0; // Initialize all cells to 0 for local alignment
+                }
+            }
+        }
 
+        void fillMatrix_Local(vector<vector<int>>& matrix, string& seq1, string& seq2) {
+            int match = 1;
+            int mismatch = -1;
+            int gap = -1;
 
+            for (size_t i = 1; i <= seq1.size(); ++i) {
+                for (size_t j = 1; j <= seq2.size(); ++j) {
+                    int scoreDiag = matrix[i-1][j-1] + (seq1[i-1] == seq2[j-1] ? match : mismatch);
+                    int scoreUp = matrix[i-1][j] + gap;
+                    int scoreLeft = matrix[i][j-1] + gap;
+                    matrix[i][j] = max(0, max(scoreDiag, max(scoreUp, scoreLeft))); // Local alignment allows scores to be zero
+                }
+            }
+        }
+
+        vector<string> traceback_Local(vector<vector<int>>& matrix, string& seq1, string& seq2) {
+            int max_i = 0, max_j = 0;
+            int max_score = 0;
+
+            // Find the cell with the maximum score
+            for (size_t i = 1; i <= seq1.size(); ++i) {
+                for (size_t j = 1; j <= seq2.size(); ++j) {
+                    if (matrix[i][j] > max_score) {
+                        max_score = matrix[i][j];
+                        max_i = i;
+                        max_j = j;
+                    }
+                }
+            }
+            string aligned_seq1 = "";
+            string aligned_seq2 = "";
+
+            // Traceback from the cell with the maximum score
+            size_t i = max_i;
+            size_t j = max_j;
+            while (i > 0 && j > 0 && matrix[i][j] != 0) {
+                if (matrix[i][j] == matrix[i-1][j-1] + (seq1[i-1] == seq2[j-1] ? 1 : -1)) {
+                    aligned_seq1 = seq1[i-1] + aligned_seq1;
+                    aligned_seq2 = seq2[j-1] + aligned_seq2;
+                    --i;
+                    --j;
+                } else if (matrix[i][j] == matrix[i-1][j] - 1) {
+                    aligned_seq1 = seq1[i-1] + aligned_seq1;
+                    aligned_seq2 = "-" + aligned_seq2;
+                    --i;
+                } else {
+                    aligned_seq1 = "-" + aligned_seq1;
+                    aligned_seq2 = seq2[j-1] + aligned_seq2;
+                    --j;
+                }
+            }
+
+            return {aligned_seq1, aligned_seq2};
+        }
 
     public: 
 
@@ -276,8 +336,17 @@ class Align{
         }
 
 
-        //vector<string> Local_SW(string seq1,string seq2) {} // IMPLEMENT
+        vector<string> Local_NW(string& seq1, string& seq2){
+            
+            vector<vector<int>> matrix(seq1.size() + 1, vector<int>(seq2.size() + 1, 0));
+            
+            initializeMatrix_Local(matrix, seq1, seq2);
+            fillMatrix_Local(matrix, seq1, seq2);
+            vector<string> alignment = traceback_Local(matrix, seq1, seq2);
 
+            return alignment;
+            
+        }
 
 };
 

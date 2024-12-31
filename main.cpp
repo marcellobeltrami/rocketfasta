@@ -22,13 +22,19 @@ int main(int argc, char** argv) {
     string reference;
     app.add_option("-r,--reference-id", reference, "ID of the reference sequence found in FASTA file.");
 
-
+    string al_type; // Function to be implemented. (logic is there, need to connect to CLI)
+    app.add_option("-a,--alignment-type", al_type, "Specifies a global alignment of all sequences in the fasta file against reference. g = global, l = local");
+    
     string subsequence;
     app.add_option("-s,--subsequence-pattern", subsequence, "A nucleotide sequence that you want to file in the fasta sequences of fasta file. Start inclusive, End non-inclusive.");
 
 
     CLI11_PARSE(app, argc, argv);
     // CLI Interface ends----------------------------//
+
+    if (al_type == ""){ // Default alignment is global.
+        al_type = "g"; 
+    }
 
 
     BLAST_info my_fasta;
@@ -43,7 +49,7 @@ int main(int argc, char** argv) {
     }
     
     // Carrys out alignment when reference is provided.
-    alignment(path,reference,FastaStruct, my_fasta);
+    alignment(path,reference,FastaStruct, my_fasta, al_type); // add alignement type to function.
     
     // Finds first occurrences of subsequence in all sequences of fasta file.
     subseqsearch(subsequence, path, reference, FastaStruct, my_fasta);
